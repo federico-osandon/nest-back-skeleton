@@ -15,11 +15,11 @@ export class UsersService {
         @InjectRepository(User)
         private readonly userRepository: Repository<User>,
         private readonly jwtService: JwtService
-    ) {}
+    ) { }
 
     async create(createUserDto: CreateUserDto) {
         try {
-            const { password, ...userData} = createUserDto;
+            const { password, ...userData } = createUserDto;
 
             const user = this.userRepository.create({
                 ...userData,
@@ -43,25 +43,33 @@ export class UsersService {
         return await this.userRepository.find();
     }
 
-    findOne(id: number) {
+    findOne(id: string) {
         return `This action returns a #${id} user`;
     }
 
-    update(id: number, updateUserDto: UpdateUserDto) {
+    async findOneByEmail(email: string) {
+        const user = await this.userRepository.findOne({
+            where: { email },
+            select: { email: true, password: true, id: true, fullName: true, roles: true }
+        });
+        return user;
+    }
+
+    update(id: string, updateUserDto: UpdateUserDto) {
         return `This action updates a #${id} user`;
     }
 
-    remove(id: number) {
+    remove(id: string) {
         return `This action removes a #${id} user`;
     }
 
-    private getJwtToken( payload: JwtPayload ) {
-        const token = this.jwtService.sign( payload );
+    private getJwtToken(payload: JwtPayload) {
+        const token = this.jwtService.sign(payload);
         return token;
     }
 
-    private handleDBErrors (error: any): never {
-        if(error.code === '23505') {
+    private handleDBErrors(error: any): never {
+        if (error.code === '23505') {
             throw new BadRequestException(error.detail);
         }
         console.log(error);
