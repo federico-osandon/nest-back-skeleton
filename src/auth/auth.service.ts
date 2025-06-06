@@ -17,8 +17,8 @@ import { UsersService } from '../users/users.service';
 export class AuthService {
 
     constructor(
-        // @InjectRepository(User)
-        // private readonly userRepository: Repository<User>,
+        @InjectRepository(User)
+        private readonly userRepository: Repository<User>,
 
         private readonly jwtService: JwtService,
         
